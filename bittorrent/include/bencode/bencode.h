@@ -7,6 +7,7 @@
 namespace bittorrent {
 class Bencode {
 public:
-    static nlohmann::json decode(const std::string_view& inData);
+    using data_t = nlohmann::json;
+    static data_t decode(const std::string_view& inData);
 };
 } // namespace bittorrent
