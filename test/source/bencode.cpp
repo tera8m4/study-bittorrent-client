@@ -51,3 +51,40 @@ TEST_CASE("Bencode decode a dictionary")
     CHECK(simpleDictionary.is_object());
     CHECK(simpleDictionary["foo"].get<std::string>() == "bar");
 }
+
+TEST_CASE("Bencode encode a number")
+{
+    const Bencode::data_t& positiveNumber = 42;
+    CHECK(Bencode::encode(positiveNumber) == "i42e");
+
+    const Bencode::data_t& negativeNumber = -542;
+    CHECK(Bencode::encode(negativeNumber) == "i-542e");
+}
+
+TEST_CASE("Bencode encode a string")
+{
+    const std::string& testString = "hello world";
+    const Bencode::data_t& testData = testString;
+    CHECK(Bencode::encode(testData) == std::to_string(testString.size()) + ":" + testString);
+
+    const Bencode::data_t& emptyString = std::string {};
+    CHECK(Bencode::encode(emptyString) == "0:");
+}
+
+TEST_CASE("Bencode encode an array")
+{
+    Bencode::data_t testArray = Bencode::data_t::array({ 42, -52, "hello" });
+    CHECK(Bencode::encode(testArray) == "li42ei-52e5:helloe");
+
+    Bencode::data_t emptyArray = Bencode::data_t::array();
+    CHECK(Bencode::encode(emptyArray) == "le");
+}
+
+TEST_CASE("Bencode encode a dictionary")
+{
+    Bencode::data_t testDictionary;
+    testDictionary.emplace("a", -42);
+    testDictionary.emplace("b", "hello");
+
+    CHECK(Bencode::encode(testDictionary) == "d1:ai-42e1:b5:helloe");
+}

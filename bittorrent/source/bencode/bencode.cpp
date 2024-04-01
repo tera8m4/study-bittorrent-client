@@ -99,10 +99,48 @@ Bencode::data_t decodeHelper(std::string_view inData, std::size_t& outBytesRead)
     }
     throw std::runtime_error("undefined data type");
 }
+
+void encodeHelper(const Bencode::data_t& inData, std::stringstream& outStringStream)
+{
+    if (inData.is_string()) {
+        const std::string str = inData.get<std::string>();
+        outStringStream << str.size() << ':' << str;
+        return;
+    } else if (inData.is_number()) {
+        outStringStream << 'i' << inData.get<long long>() << 'e';
+        return;
+    } else if (inData.is_array()) {
+        outStringStream << 'l';
+        for (const auto& el : inData) {
+            encodeHelper(el, outStringStream);
+        }
+        outStringStream << "e";
+        return;
+    } else if (inData.is_object()) {
+        outStringStream << "d";
+        for (const auto& pair : inData.items()) {
+            encodeHelper(pair.key(), outStringStream);
+            encodeHelper(pair.value(), outStringStream);
+        }
+        outStringStream << "e";
+        return;
+    }
+
+    throw std::runtime_error("unsupported object type");
+}
+
 } // namespace
 
 Bencode::data_t Bencode::decode(const std::string_view& inData)
 {
     std::size_t tmp = 0;
     return decodeHelper(inData, tmp);
+}
+
+std::string Bencode::encode(const data_t& inObject)
+{
+    std::stringstream ss;
+    encodeHelper(inObject, ss);
+
+    return ss.str();
 }
