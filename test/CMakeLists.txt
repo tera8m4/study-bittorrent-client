@@ -55,6 +55,14 @@ catch_discover_tests(${PROJECT_NAME})
 # include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 # doctest_discover_tests(${PROJECT_NAME})
 
+# ---- copy auxilary files
+
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/assets/ubuntu-23.10.1-desktop-amd64.iso.torrent
+                ${CMAKE_CURRENT_BINARY_DIR}/ubuntu-23.10.1-desktop-amd64.iso.torrent)
+
 # ---- code coverage ----
 
 if(ENABLE_TEST_COVERAGE)
