@@ -13,6 +13,8 @@ public:
     std::string getTrackerURL() const;
     std::size_t getLength() const;
     std::string getInfoHash() const;
+    std::size_t getPieceLength() const;
+    std::vector<std::string> getPieceHashes() const;
 
 private:
     std::filesystem::path filePath;

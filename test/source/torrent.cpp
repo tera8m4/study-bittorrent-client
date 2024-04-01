@@ -23,4 +23,12 @@ TEST_CASE("Torrent file")
         const auto& infoHash = torrent.getInfoHash();
         CHECK(infoHash == "9ecd4676fd0f0474151a4b74a5958f42639cebdf");
     }
+
+    SECTION("get pieces information")
+    {
+        CHECK(torrent.getPieceLength() == 262144);
+        const std::vector<std::string>& pieces = torrent.getPieceHashes();
+        CHECK(pieces.size() > 0);
+        CHECK(pieces[0] == "b593682638ebd24032736050c1744adc5befd732");
+    }
 }
