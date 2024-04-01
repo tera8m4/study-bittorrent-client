@@ -17,9 +17,9 @@ using namespace bittorrent;
 namespace {
 Bencode::data_t decodeHelper(std::string_view inData, std::size_t& outBytesRead);
 
-int decodeNumber(const std::string_view& inData)
+long long stringViewToNumber(const std::string_view& inData)
 {
-    int num;
+    long long num;
     auto result = std::from_chars(inData.data(), inData.data() + inData.size(), num);
     if (result.ec == std::errc::invalid_argument) {
         throw std::runtime_error("failed to parse number");
@@ -34,10 +34,10 @@ Bencode::data_t decodeString(std::string_view inData, std::size_t& outBytesRead)
         throw std::runtime_error("failed to parse string");
     }
 
-    const int stringSize = decodeNumber(inData.substr(0, numberEnd));
+    const int stringSize = stringViewToNumber(inData.substr(0, numberEnd));
     outBytesRead = numberEnd + stringSize + 1;
-
-    return nlohmann::json(std::string { inData.substr(numberEnd + 1, numberEnd + stringSize - 1) });
+    const std::string_view& substr = inData.substr(numberEnd + 1, stringSize);
+    return nlohmann::json(std::string { substr });
 }
 
 Bencode::data_t decodeInteger(std::string_view inData, std::size_t& outBytesRead)
@@ -46,8 +46,8 @@ Bencode::data_t decodeInteger(std::string_view inData, std::size_t& outBytesRead
     if (endPos == std::string_view::npos) {
         throw std::runtime_error("invalid number format");
     }
-    const int decodedNumber = decodeNumber(inData.substr(1, endPos));
-    outBytesRead = endPos;
+    const long long decodedNumber = stringViewToNumber(inData.substr(1, endPos));
+    outBytesRead = endPos + 1;
     return nlohmann::json(decodedNumber);
 }
 
@@ -63,7 +63,7 @@ Bencode::data_t decodeArray(std::string_view inData, std::size_t& outBytesRead)
         bytesRead += itemRead;
     }
 
-    outBytesRead = bytesRead;
+    outBytesRead = bytesRead + 1;
     return json;
 }
 
