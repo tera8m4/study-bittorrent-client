@@ -23,7 +23,7 @@ std::string bittorrent::utils::readFile(const std::filesystem::path& inPath)
     return result;
 }
 
-std::string bittorrent::utils::sha1(const std::string& inData)
+bittorrent::utils::Sha1Hash bittorrent::utils::sha1(const std::string& inData)
 {
     const uint64_t bitLength = inData.size() * 8;
 
@@ -92,15 +92,12 @@ std::string bittorrent::utils::sha1(const std::string& inData)
         h4 = h4 + e;
     }
 
-    std::stringstream ss;
+    Sha1Hash result;
+    result.insert(0, h0);
+    result.insert(4, h1);
+    result.insert(8, h2);
+    result.insert(12, h3);
+    result.insert(16, h4);
 
-    ss << std::hex
-       << std::setfill('0')
-       << std::setw(8) << h0
-       << std::setw(8) << h1
-       << std::setw(8) << h2
-       << std::setw(8) << h3
-       << std::setw(8) << h4;
-
-    return ss.str();
+    return result;
 }

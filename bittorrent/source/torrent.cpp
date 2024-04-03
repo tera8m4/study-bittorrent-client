@@ -37,26 +37,22 @@ std::size_t bittorrent::TorrentFile::getPieceLength() const
     return metaData.at("info").at("piece length");
 }
 
-std::vector<std::string> bittorrent::TorrentFile::getPieceHashes() const
+std::vector<utils::Sha1Hash> bittorrent::TorrentFile::getPieceHashes() const
 {
     std::cout << metaData.at("info").at("pieces").type_name() << std::endl;
 
     const std::string& pieces = metaData.at("info").at("pieces").get<std::string>();
-    std::vector<std::string> result;
-    result.reserve(pieces.size() / 20);
+    std::vector<utils::Sha1Hash> result;
+    constexpr std::size_t SHA1_SIZE = 20;
+    const std::size_t piecesNum = pieces.size() / SHA1_SIZE;
+    result.reserve(piecesNum);
 
-    for (std::size_t i = 0; i < 40; i += 20) {
-
-        std::stringstream ss;
-        ss << std::hex
-           << std::setfill('0')
-           << std::setw(2);
-
+    for (std::size_t i = 0; i < piecesNum; i += SHA1_SIZE) {
+        utils::Sha1Hash hash;
         for (int j = 0; j < 20; ++j) {
-            const unsigned char c = pieces[i + j];
-            ss << static_cast<int>(c);
+            hash[j] = pieces[i + j];
         }
-        result.emplace_back(ss.str());
+        result.emplace_back(hash);
     }
 
     return result;

@@ -27,7 +27,7 @@ TEST_CASE("Torrent file")
     SECTION("get pieces information")
     {
         CHECK(torrent.getPieceLength() == 262144);
-        const std::vector<std::string>& pieces = torrent.getPieceHashes();
+        const std::vector<utils::Sha1Hash>& pieces = torrent.getPieceHashes();
         CHECK(pieces.size() > 0);
         CHECK(pieces[0] == "b593682638ebd24032736050c1744adc5befd732");
     }
