@@ -1,6 +1,24 @@
+#include <catch2/catch_test_macros.hpp>
+#include <hash.h>
 #include <utils.h>
 
-#include <catch2/catch_test_macros.hpp>
+TEST_CASE("hash view")
+{
+    bittorrent::HashView<3> view;
+    CHECK(std::string { view } == "000000");
+    CHECK(view[0] == 0);
+    CHECK(view[1] == 0);
+    CHECK(view[2] == 0);
+
+    view[0] = 0xda;
+    view[1] = 0x39;
+    view[2] = 0xa3;
+
+    CHECK(view[0] == 0xda);
+    CHECK(view[1] == 0x39);
+    CHECK(view[2] == 0xa3);
+    CHECK(std::string { view } == "da39a3");
+}
 
 TEST_CASE("sha1 hash")
 {
