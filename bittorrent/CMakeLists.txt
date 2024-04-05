@@ -26,6 +26,15 @@ CPMAddPackage(
     GITHUB_REPOSITORY nlohmann/json
     VERSION 3.11.3
     OPTIONS "JSON_Install YES")
+
+
+
+CPMAddPackage(
+  NAME cpr
+  "gh:libcpr/cpr#1.10.5" 
+  OPTIONS "CPR_USE_SYSTEM_CURL ON")
+    
+
 # ---- Add source files ----
 
 file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
@@ -37,7 +46,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
 
 # Link dependencies
-target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(${PROJECT_NAME} PUBLIC nlohmann_json::nlohmann_json PRIVATE cpr::cpr)
 
 target_include_directories(
   ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>

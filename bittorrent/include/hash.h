@@ -39,6 +39,17 @@ public:
         }
     }
 
+    std::string asRawString() const
+    {
+        std::string s;
+        s.reserve(N);
+
+        for (const uint8_t el : data) {
+            s.push_back(el);
+        }
+        return s;
+    }
+
     bool operator==(const std::string& inString) const
     {
         return static_cast<std::string>(*this) == inString;
